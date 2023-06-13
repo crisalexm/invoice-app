@@ -1,17 +1,77 @@
-import { useState } from "react";
-import { getInvoice } from "./services/getInvoice"
+import { useEffect, useState } from "react";
+import { getInvoice, calculateTotal } from "./services/getInvoice"
 import { ClientView } from "./components/ClientView";
 import { CompanyView } from "./components/CompanyView";
 import { InvoiceView } from "./components/InvoiceView";
 import { ListItemView } from "./components/ListItemsView";
 import { TotalView } from "./components/TotalView";
+import { invoice } from "./data/invoice";
+import { FormItemsView } from "./components/FormItemsView";
+
+const invoiceInitial={
+    id: 0,
+    name: '',
+    client: {
+        name: '',
+        lastName: '',
+        address: {
+            country: '',
+            city: '',
+            street: '',
+            number: 0
+        }
+    },
+    company: {
+        name: '',
+        fiscalNumber: 0
+    },
+    items: []
+}
 
 export const InvoiceApp = () => {
-    const { total, id, name, client, company, items:itemsInitial } = getInvoice();
-    const [productValue, setProductValue] = useState('');
-    const [priceValue, setPriceValue] = useState(0);
-    const [quantityValue, setQuantityValue] = useState(0);
-    const[items, setItems] = useState(itemsInitial)
+    const [activeForm, setActiveForm] = useState(false);
+    const [invoice, setInvoice] = useState(invoiceInitial);
+    const [items, setItems] = useState([]);
+    const [total, setTotal] = useState(0);
+    const [counter, setCounter] = useState(4);
+
+
+
+    const { id, name, client, company } = invoice;
+
+
+
+    useEffect( () => {
+        const data = getInvoice();
+        console.log(data);
+        setInvoice(data)
+        setItems(data.items)
+    }, []);
+
+    useEffect(() => {
+        setTotal(calculateTotal(items));
+    },[items] );
+
+
+    
+
+    const handlerAddItemsSubmit = ({product, price, quantity}) => {
+
+
+        setItems([...items,
+        {
+            id: counter,
+            product: product.trim(),
+            price: +price.trim(),
+            quantity: parseInt(quantity.trim(), 10)
+        }
+        ]);
+        setCounter(counter + 1)
+    }
+
+    const onActiveForm = () =>  {
+      setActiveForm(!activeForm)  
+    }
 
     return (
         <>
@@ -34,25 +94,12 @@ export const InvoiceApp = () => {
 
                         <ListItemView title="Productos de la factura" items={items} />
                         <TotalView total={total} />
-                        <form action="" className="w-50" onSubmit={ event => {
-                            event.preventDefault();
-
-                            setItems([...items,{key: 4, product: productValue,price: priceValue,quantity: quantityValue}])
-                        }}>
-                            <input type="text" name="product" id="" placeholder="Producto" className="form-control m-3" onChange={event => {
-                                console.log(event.target.value)
-                                setProductValue(event.target.value);
-                            }}/>
-                            <input type="text" name="price" id="" placeholder="Precio" className="form-control m-3" onChange={event => {
-                                console.log(event.target.value)
-                                setPriceValue(event.target.value);
-                            }}/>
-                            <input type="text" name="quantity" id="" placeholder="Cantidad" className="form-control m-3" onChange={event => {
-                                console.log(event.target.value)
-                                setQuantityValue(event.target.value);
-                            }}/>
-                            <button type="submit" className="btn btn-primary ms-3">Crear Item</button>
-                        </form>
+                        <button className="btn btn-outline-secondary" onClick={onActiveForm}>
+                            {!activeForm ? 'Agregar Item' :'Ocultar Form'}
+                        </button>
+                        
+                        {!activeForm ? '' : <FormItemsView handler = {(newItem) => handlerAddItemsSubmit(newItem)}/>}
+                        
                     </div>
                 </div>
             </div>

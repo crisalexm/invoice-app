@@ -30,7 +30,7 @@ export const invoice = {
             price: 150,
         },
         {
-            id:4,
+            id:3,
             product: 'Monitor',
             quantity: 1,
             price: 300,
