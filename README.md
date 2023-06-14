@@ -1,6 +1,6 @@
 # invoice-app
 # Aplicación web de Facturación 🧾
-Esta es una pequeña aplicación web de facturación desarrollada con React. Te permite agregar elementos a la factura con su nombre, precio y cantidad, y también te brinda la opción de eliminar los elementos agregados.
+Esta es una pequeña aplicación web de facturación desarrollada con **React**⚛️. Te permite agregar elementos a la factura con su nombre, precio y cantidad, y también te brinda la opción de eliminar los elementos agregados.
 
 ## Características✨
 - **Agregar elementos a la factura** ➕: Puedes ingresar el nombre del elemento, su precio unitario y la cantidad deseada, y agregarlo a la factura.
